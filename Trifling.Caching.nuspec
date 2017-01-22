@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>Trifling.Caching</id>
+        <version>0.1.1-beta</version>
+        <title>Trifling Caching</title>
+        <authors>Trifling Contributors</authors>
+        <owners>JamesHough</owners>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>https://github.com/JamesHough/trifling.caching</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A Trifling library for common caching operations.</description>
+        <summary>Trifling Caching</summary>
+        <copyright>Copyright 2017</copyright>
+        <tags>caching wrapper</tags>
+        <dependencies>
+            <group targetFramework=".NETStandard1.6">
+                <dependency id="Trifling.Common" version="0.1.4-beta" />
+                <dependency id="Microsoft.Extensions.Options.ConfigurationExtensions" version="1.1.0" />
+                <dependency id="NETStandard.Library" version="1.6.1" />
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="Trifling.Caching\bin\Debug\netstandard1.6\Trifling.Caching.dll" target="lib\Trifling.Caching.dll" />
+    </files>
+</package>
