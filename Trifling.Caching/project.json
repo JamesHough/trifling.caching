@@ -2,7 +2,7 @@
   "title": "Trifling.Caching",
   "copyright": "James Hough 2017",
   "description": "Trifling Caching Library",
-  "version": "0.1.1-beta",
+  "version": "0.1.2-beta",
 
   "dependencies": {
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
