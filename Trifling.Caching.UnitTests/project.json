@@ -1,0 +1,30 @@
+{
+  "title": "Trifling.Caching.UnitTests",
+  "copyright": "James Hough 2017",
+  "description": "The Unit Tests for the Trifling Caching Library",
+  "version": "0.1.1-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "testRunner": "mstest",
+
+  "dependencies": {
+    "dotnet-test-mstest": "1.1.2-preview",
+    "Microsoft.NETCore.App": "1.1.0",
+    "Moq": "4.6.38-alpha",
+    "MSTest.TestFramework": "1.0.8-rc",
+    "Trifling.Caching": "0.1.1-*"
+  },
+
+  "runtimes": {
+    "win10-x64": {}
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  },
+  "userSecretsId": "aspnet-Trifling.Caching.UnitTests-20170122070641"
+}
