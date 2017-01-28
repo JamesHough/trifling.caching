@@ -2,17 +2,32 @@
   "title": "Trifling.Caching",
   "copyright": "James Hough 2017",
   "description": "Trifling Caching Library",
-  "version": "0.1.3-beta",
+  "version": "0.2.0-beta",
+
   "dependencies": {
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
-    "NETStandard.Library": "1.6.1",
-    "Trifling.Common": "0.1.4-beta"
+    "Trifling.Common": "0.2.2-beta"
   },
+
   "frameworks": {
     "netstandard1.6": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+
+      "dependencies": {
+        "NETStandard.Library": "1.6.1"
+      },
+
+      "buildOptions": {
+        "define": [ "NETCORE" ]
+      }
+    },
+    "net452": {
+      "buildOptions": {
+        "define": [ "NET45" ]
+      }
     }
   },
+  
   "buildOptions": {
     "xmlDoc": true
   }
