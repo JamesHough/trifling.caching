@@ -14,10 +14,12 @@ namespace Trifling.Caching.Impl
         /// Initialises a new instance of the <see cref="SimpleCacheEntryMetadata"/> class. 
         /// </summary>
         /// <param name="key">The unique key of the cache entry.</param>
+        /// <param name="type">The type of cached entry - one of 'S', 'L', 'D', 'Q' or 'V'.</param>
         /// <param name="expireTimeUtc">The date and time that the cache entry will expire (Universal time).</param>
-        public SimpleCacheEntryMetadata(string key, DateTime expireTimeUtc)
+        public SimpleCacheEntryMetadata(string key, char type, DateTime expireTimeUtc)
         {
             this.Key = key;
+            this.Type = type;
             this.ExpireTimeUtc = expireTimeUtc;
         }
 
@@ -30,6 +32,11 @@ namespace Trifling.Caching.Impl
         /// Gets the date and time that the cache entry will expire (Universal time).
         /// </summary>
         public DateTime ExpireTimeUtc { get; private set; }
+
+        /// <summary>
+        /// Gets the type of cache entry that the <see cref="Key"/> represents.
+        /// </summary>
+        public char Type { get; private set; }
 
         #region IEquatable interface
 
@@ -101,7 +108,7 @@ namespace Trifling.Caching.Impl
         /// </summary>
         /// <param name="obj">The instance to which the current instance is being compared.</param>
         /// <returns>Returns the relative position of the current item.</returns>
-        /// <remarks>Can compare the current instance of <see cref="SimpleCacheEntryMetadata"/> to a string if <param name="obj"/> is a string.</remarks>
+        /// <remarks>Can compare the current instance of <see cref="SimpleCacheEntryMetadata"/> to a string if <paramref name="obj"/> is a string.</remarks>
         public int CompareTo(object obj)
         {
             // we can compare directly to the key if the comparison is done on a string.

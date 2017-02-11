@@ -22,8 +22,8 @@ namespace Trifling.Caching.Interfaces
         T Cache<T>(CacheEntryKey key, T value, TimeSpan expiry);
 
         /// <summary>
-        /// Attempts to retrieve the cached value. If not found or if expired, then executes the provided
-        /// <paramref name="valueFunction"/> to get a value and caches that value and returns that value.
+        /// Attempts to retrieve the cached value. If not found or if expired, then uses the provided
+        /// <paramref name="valueIfNotFound"/>, caches that value and returns that value.
         /// </summary>
         /// <param name="key">The unique identifier of the cache entry to retrieve or re-cache.</param>
         /// <param name="valueIfNotFound">The default value to use only if the specified cache entry key is 

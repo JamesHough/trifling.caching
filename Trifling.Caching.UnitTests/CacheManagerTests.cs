@@ -323,7 +323,7 @@
                 binarySerializerMoq.Object,
                 compressorFactoryMoq.Object);
 
-            var aList = new List<string> { "1", "2", "3", "4" };
+            var list = new List<string> { "1", "2", "3", "4" };
 
             var fakedValue = new FakeTypeForTesting
             {
@@ -335,7 +335,7 @@
                 {
                     { "more1", "names" },
                     { "more2", 456d },
-                    { "more3", aList }
+                    { "more3", list }
                 }
             };
 
@@ -354,7 +354,7 @@
             var expectedKeyString = cacheEntryKey.ToString();
             var expectedExpiryTime = TimeSpan.FromMinutes(20d);
 
-            var aList = new List<string> { "1", "2", "3", "4" };
+            var list = new List<string> { "1", "2", "3", "4" };
 
             var fakedValue = new FakeTypeForTesting
             {
@@ -366,7 +366,7 @@
                 {
                     { "more1", "names" },
                     { "more2", 456d },
-                    { "more3", aList }
+                    { "more3", list }
                 }
             };
 
@@ -421,7 +421,7 @@
             var expectedExpiryTime = TimeSpan.FromMinutes(20d);
             var givenSerializedValue = new byte[0];
 
-            var aList = new List<string> { "1", "2", "3", "4" };
+            var list = new List<string> { "1", "2", "3", "4" };
 
             var fakedValue = new FakeTypeForTesting
             {
@@ -433,7 +433,7 @@
                 {
                     { "more1", "names" },
                     { "more2", 456d },
-                    { "more3", aList }
+                    { "more3", list }
                 }
             };
 
@@ -711,7 +711,7 @@
             var expectedExpiryTime = TimeSpan.FromMinutes(30d);
             var givenSerializedValue = new byte[0];
 
-            var aList = new List<string> { "1", "2", "3", "4" };
+            var list = new List<string> { "1", "2", "3", "4" };
 
             var fakedValue = new FakeTypeForTesting
             {
@@ -723,7 +723,7 @@
                 {
                     { "more1", "names" },
                     { "more2", 456d },
-                    { "more3", aList }
+                    { "more3", list }
                 }
             };
 
@@ -1119,7 +1119,6 @@
         public IList<TimeSpan> Hours { get; set; }
 
         public Dictionary<string, object> Lookups { get; set; }
-
     }
 
     #endregion classes for faking

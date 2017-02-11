@@ -220,9 +220,9 @@ namespace Trifling.Caching
         /// <see cref="CacheEntryKey"/> instance.</exception>
         /// <remarks>
         /// <list type="bullet">
-        /// <item>If the current instance is before the given <paramref name="other"/> instance, then a negative number
+        /// <item>If the current instance is before the given <paramref name="obj"/> instance, then a negative number
         /// is returned.</item>
-        /// <item>If the current instance is after the given <paramref name="other"/> instance, then a positive number 
+        /// <item>If the current instance is after the given <paramref name="obj"/> instance, then a positive number 
         /// is returned.</item>
         /// <item>If both instances have the same value then zero is returned.</item>
         /// </list>

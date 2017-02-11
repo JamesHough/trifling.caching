@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>Trifling.Caching</id>
-        <version>0.2.0-beta</version>
+        <version>0.3.0-beta</version>
         <title>Trifling Caching</title>
         <authors>Trifling Contributors</authors>
         <owners>JamesHough</owners>
@@ -11,7 +11,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A Trifling library for common caching operations.</description>
         <summary>Trifling Caching</summary>
-        <releaseNotes>0.2.0-beta
+        <releaseNotes>0.3.0-beta
+* Added support for Sets, Lists, Dictionaries and Queues
+* ICacheEngine.Cache return type change
+* StyleCop cleanup
+
+0.2.0-beta
 * Added support for Framework 4.5.2</releaseNotes>
         <copyright>Copyright 2017</copyright>
         <tags>caching wrapper</tags>
