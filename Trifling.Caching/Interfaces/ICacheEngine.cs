@@ -185,7 +185,7 @@ namespace Trifling.Caching.Interfaces
         /// <param name="value">The value to append to the cached list.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be appended. Otherwise true.</returns>
         bool AppendToList<T>(string cacheEntryKey, T value)
-            where T : IComparable;
+            where T : IConvertible;
 
         /// <summary>
         /// Appends a new byte array value to the end of an existing cached list.
@@ -411,7 +411,7 @@ namespace Trifling.Caching.Interfaces
         /// <param name="value">The value to append to the cached queue.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be pushed to the queue. Otherwise true.</returns>
         bool PushQueue<T>(string cacheEntryKey, T value)
-            where T : IComparable;
+            where T : IConvertible;
 
         /// <summary>
         /// Pushes a new byte array to the end of an existing cached queue.

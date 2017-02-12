@@ -9,6 +9,7 @@ namespace Trifling.Caching.Impl
     using System.Linq;
 
     using Trifling.Caching.Interfaces;
+    using Trifling.Comparison;
 
     /// <summary>
     /// A very simple in-memory cache with basic expiry support and no memory limits nor any optimised key removal.
@@ -197,7 +198,7 @@ namespace Trifling.Caching.Impl
             }
 
             var expireTime = DateTime.UtcNow.Add(expiry);
-            var value = new SortedSet<object>(setItems.Cast<object>(), ByteArrayComparer.Default);
+            var value = new SortedSet<object>(setItems.Cast<object>(), BoxedByteArrayComparer.Default);
 
             cachedSets.AddOrUpdate(cacheEntryKey, value, (k, v) => value);
 
@@ -511,7 +512,7 @@ namespace Trifling.Caching.Impl
         /// <param name="value">The value to append to the cached list.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be appended. Otherwise true.</returns>
         public bool AppendToList<T>(string cacheEntryKey, T value)
-            where T : IComparable
+            where T : IConvertible
         {
             // first remove anything that has already expired.
             this.CleanupExpiredCacheItems();
@@ -736,7 +737,7 @@ namespace Trifling.Caching.Impl
                 return -1L;
             }
 
-            return retrievedList.RemoveAll(l => ByteArrayComparer.Default.Compare(l, value) == 0);
+            return retrievedList.RemoveAll(l => BoxedByteArrayComparer.Default.Compare(l, value) == 0);
         }
 
         /// <summary>
@@ -1200,7 +1201,7 @@ namespace Trifling.Caching.Impl
         /// <param name="value">The value to append to the cached queue.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be pushed to the queue. Otherwise true.</returns>
         public bool PushQueue<T>(string cacheEntryKey, T value)
-            where T : IComparable
+            where T : IConvertible
         {
             // first remove anything that has already expired.
             this.CleanupExpiredCacheItems();
