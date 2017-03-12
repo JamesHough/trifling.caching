@@ -20,6 +20,13 @@ namespace Trifling.Caching.Interfaces
         /// <returns>If the cache entry was found and removed, then returns true. Otherwise returns false.</returns>
         bool Remove(CacheEntryKey cacheEntryKey);
 
+        /// <summary>
+        /// Checks if any cached value exists with the specified <paramref name="cacheEntryKey"/>.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique identifier of the cache entry to seek in cache.</param>
+        /// <returns>If the cache entry was found, then returns true. Otherwise returns false.</returns>
+        bool Exists(CacheEntryKey cacheEntryKey);
+
         #endregion Common caching operations
 
         #region Single value caching
@@ -105,6 +112,22 @@ namespace Trifling.Caching.Interfaces
         /// <returns>Returns the located set from the cache if the key was found. Otherwise null.</returns>
         ISet<T> RetrieveSet<T>(CacheEntryKey cacheEntryKey);
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="value"/> in a cached set.
+        /// </summary>
+        /// <typeparam name="T">The type of objects that are contained in the cached set.</typeparam>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and within which to find the value.</param>
+        /// <param name="value">The value to locate in the existing set.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the value is not present in the cached set.</returns>
+        bool ExistsInSet<T>(CacheEntryKey cacheEntryKey, T value);
+
+        /// <summary>
+        /// Gets the length of a set stored in the cache. If the key doesn't exist or isn't a set then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the set if found, or null if not found.</returns>
+        long? LengthOfSet(CacheEntryKey cacheEntryKey);
+
         #endregion Set caching
 
         #region List caching
@@ -169,6 +192,13 @@ namespace Trifling.Caching.Interfaces
         /// <param name="cacheEntryKey">The unique key of the cache entry which contains the list that must be cleared.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the list cannot be cleared. Otherwise true.</returns>
         bool ClearList(CacheEntryKey cacheEntryKey);
+
+        /// <summary>
+        /// Gets the length of a list stored in the cache. If the key doesn't exist or isn't a list then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached list to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the list if found, or null if not found.</returns>
+        long? LengthOfList(CacheEntryKey cacheEntryKey);
 
         #endregion List caching
 
@@ -239,6 +269,21 @@ namespace Trifling.Caching.Interfaces
         /// <returns>Returns true if the value was located in the cached dictionary. Otherwise false.</returns>
         bool RetrieveDictionaryEntry<T>(CacheEntryKey cacheEntryKey, string dictionaryKey, out T value);
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="dictionaryKey"/> in a cached dictionary.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cache entry which contains the dictionary.</param>
+        /// <param name="dictionaryKey">The unique name within the dictionary for the value being sought.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the key is not present in the cached dictionary.</returns>
+        bool ExistsInDictionary(CacheEntryKey cacheEntryKey, string dictionaryKey);
+
+        /// <summary>
+        /// Gets the length of a dictionary stored in the cache. If the key doesn't exist or isn't a dictionary then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached dictionary to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the dictionary if found, or null if not found.</returns>
+        long? LengthOfDictionary(CacheEntryKey cacheEntryKey);
+
         #endregion Dictionary caching
 
         #region Queue caching
@@ -277,6 +322,13 @@ namespace Trifling.Caching.Interfaces
         /// <param name="cacheEntryKey">The unique key of the cache entry which contains the queue that must be cleared.</param>
         /// <returns>Returns false if the cache entry doesn't exist or if the queue cannot be cleared. Otherwise true.</returns>
         bool ClearQueue(CacheEntryKey cacheEntryKey);
+
+        /// <summary>
+        /// Gets the length of a queue stored in the cache. If the key doesn't exist or isn't a queue then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached queue to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the queue if found, or null if not found.</returns>
+        long? LengthOfQueue(CacheEntryKey cacheEntryKey);
 
         #endregion Queue caching
     }

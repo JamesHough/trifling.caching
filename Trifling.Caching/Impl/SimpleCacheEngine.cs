@@ -76,7 +76,7 @@ namespace Trifling.Caching.Impl
         /// Initialises this cache engine with the given configuration.
         /// </summary>
         /// <param name="configuration">This implementation doesn't use the configuration given.</param>
-        public void Initialise(CacheEngineConfiguration configuration)
+        public void Initialize(CacheEngineConfiguration configuration)
         {
             // this implementation doesn't use any configuration because it's ... simple.
         }
@@ -98,6 +98,19 @@ namespace Trifling.Caching.Impl
 
             // return the outcome of our initial attempt to remove the cached item.
             return removed;
+        }
+
+        /// <summary>
+        /// Checks if any cached value exists with the specified <paramref name="cacheEntryKey"/>.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique identifier of the cache entry to seek in cache.</param>
+        /// <returns>If the cache entry was found, then returns true. Otherwise returns false.</returns>
+        public bool Exists(string cacheEntryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            return cachedItems.ContainsKey(cacheEntryKey);
         }
 
         #region Single value caching
@@ -389,6 +402,97 @@ namespace Trifling.Caching.Impl
             return new SortedSet<byte[]>(retrievedSet.Cast<byte[]>(), ByteArrayComparer.Default);
         }
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="value"/> in a cached set.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and within which to find the value.</param>
+        /// <param name="value">The value to locate in the existing set.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the value is not present in the cached set.</returns>
+        public bool ExistsInSet(string cacheEntryKey, byte[] value)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedSets.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached set
+                return false;
+            }
+
+            SortedSet<object> retrievedSet;
+            if (!cachedSets.TryGetValue(cacheEntryKey, out retrievedSet))
+            {
+                return false;
+            }
+
+            var comparer = ByteArrayComparer.Default;
+
+            // this is a sorted set, so we can stop searching as soon as the value we seek is greater than the current item.
+            return retrievedSet
+                .Cast<byte[]>()
+                .TakeWhile(v => comparer.Compare(value, v) >= 0)
+                .Any(v => comparer.Compare(value, v) == 0);
+        }
+
+        /// <summary>
+        /// Attempts to locate the <paramref name="value"/> in a cached set.
+        /// </summary>
+        /// <typeparam name="T">The type of objects that are contained in the cached set.</typeparam>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and within which to find the value.</param>
+        /// <param name="value">The value to locate in the existing set.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the value is not present in the cached set.</returns>
+        public bool ExistsInSet<T>(string cacheEntryKey, T value) 
+            where T : IConvertible
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedSets.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached set
+                return false;
+            }
+
+            SortedSet<object> retrievedSet;
+            if (!cachedSets.TryGetValue(cacheEntryKey, out retrievedSet))
+            {
+                return false;
+            }
+
+            var comparer = Comparer<T>.Default;
+
+            // this is a sorted set, so we can stop searching as soon as the value we seek is greater than the current item.
+            return retrievedSet
+                .Cast<T>()
+                .TakeWhile(v => comparer.Compare(value, v) >= 0)
+                .Any(v => comparer.Compare(value, v) == 0);
+        }
+
+        /// <summary>
+        /// Gets the length of a set stored in the cache. If the key doesn't exist or isn't a set then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the set if found, or null if not found.</returns>
+        public long? LengthOfSet(string cacheEntryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedSets.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached set
+                return null;
+            }
+
+            SortedSet<object> retrievedSet;
+            if (!cachedSets.TryGetValue(cacheEntryKey, out retrievedSet))
+            {
+                return null;
+            }
+
+            return retrievedSet.Count;
+        }
+
         #endregion Set caching
 
         #region List caching
@@ -464,7 +568,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return null;
             }
 
@@ -490,7 +594,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return null;
             }
 
@@ -519,7 +623,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return false;
             }
 
@@ -547,7 +651,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return false;
             }
 
@@ -560,67 +664,7 @@ namespace Trifling.Caching.Impl
             retrievedList.Add(value);
             return true;
         }
-
-        /// <summary>
-        /// Injects a new value into an existing cached list at the position specified.
-        /// </summary>
-        /// <typeparam name="T">The type of object being injected into the cached list. All items of the list must be of the same type.</typeparam>
-        /// <param name="cacheEntryKey">The unique key of the cache entry which contains the list that the 
-        /// <paramref name="value"/> will be appended to.</param>
-        /// <param name="index">The zero-based position at which the value must be inserted in the list.</param>
-        /// <param name="value">The value to inject into the cached list.</param>
-        /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be injected. Otherwise true.</returns>
-        public bool InjectInList<T>(string cacheEntryKey, long index, T value)
-            where T : IConvertible
-        {
-            // first remove anything that has already expired.
-            this.CleanupExpiredCacheItems();
-
-            if (!cachedLists.ContainsKey(cacheEntryKey))
-            {
-                // key doesn't exist as a cached set
-                return false;
-            }
-
-            List<object> retrievedList;
-            if (!cachedLists.TryGetValue(cacheEntryKey, out retrievedList))
-            {
-                return false;
-            }
-
-            retrievedList.Insert((int)index, value);
-            return true;
-        }
-
-        /// <summary>
-        /// Injects a new byte array value into an existing cached list at the position specified.
-        /// </summary>
-        /// <param name="cacheEntryKey">The unique key of the cache entry which contains the list that the 
-        /// <paramref name="value"/> will be appended to.</param>
-        /// <param name="index">The zero-based position at which the value must be inserted in the list.</param>
-        /// <param name="value">The byte array value to inject into the cached list.</param>
-        /// <returns>Returns false if the cache entry doesn't exist or if the value cannot be injected. Otherwise true.</returns>
-        public bool InjectInList(string cacheEntryKey, long index, byte[] value)
-        {
-            // first remove anything that has already expired.
-            this.CleanupExpiredCacheItems();
-
-            if (!cachedLists.ContainsKey(cacheEntryKey))
-            {
-                // key doesn't exist as a cached set
-                return false;
-            }
-
-            List<object> retrievedList;
-            if (!cachedLists.TryGetValue(cacheEntryKey, out retrievedList))
-            {
-                return false;
-            }
-
-            retrievedList.Insert((int)index, value);
-            return true;
-        }
-
+        
         /// <summary>
         /// Truncates values from the cached list so that only the values in the range specified remain.
         /// </summary>
@@ -642,7 +686,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return false;
             }
 
@@ -701,7 +745,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return -1L;
             }
 
@@ -727,7 +771,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return -1L;
             }
 
@@ -752,7 +796,7 @@ namespace Trifling.Caching.Impl
 
             if (!cachedLists.ContainsKey(cacheEntryKey))
             {
-                // key doesn't exist as a cached set
+                // key doesn't exist as a cached list
                 return false;
             }
 
@@ -764,6 +808,31 @@ namespace Trifling.Caching.Impl
 
             retrievedList.Clear();
             return true;
+        }
+
+        /// <summary>
+        /// Gets the length of a list stored in the cache. If the key doesn't exist or isn't a list then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached list to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the list if found, or null if not found.</returns>
+        public long? LengthOfList(string cacheEntryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedLists.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached list
+                return null;
+            }
+
+            List<object> retrievedList;
+            if (!cachedLists.TryGetValue(cacheEntryKey, out retrievedList))
+            {
+                return null;
+            }
+
+            return retrievedList.Count;
         }
 
         #endregion List caching
@@ -1133,6 +1202,57 @@ namespace Trifling.Caching.Impl
             return true;
         }
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="dictionaryKey"/> in a cached dictionary.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cache entry which contains the dictionary.</param>
+        /// <param name="dictionaryKey">The unique name within the dictionary for the value being sought.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the key is not present in the cached dictionary.</returns>
+        public bool ExistsInDictionary(string cacheEntryKey, string dictionaryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedDictionaries.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached dictionary
+                return false;
+            }
+
+            Dictionary<string, object> dictionary;
+            if (!cachedDictionaries.TryGetValue(cacheEntryKey, out dictionary))
+            {
+                return false;
+            }
+
+            return dictionary.ContainsKey(dictionaryKey);
+        }
+
+        /// <summary>
+        /// Gets the length of a dictionary stored in the cache. If the key doesn't exist or isn't a dictionary then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached dictionary to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the dictionary if found, or null if not found.</returns>
+        public long? LengthOfDictionary(string cacheEntryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedDictionaries.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached dictionary
+                return null;
+            }
+
+            Dictionary<string, object> dictionary;
+            if (!cachedDictionaries.TryGetValue(cacheEntryKey, out dictionary))
+            {
+                return null;
+            }
+
+            return dictionary.Count;
+        }
+
         #endregion Dictionary caching
 
         #region Queue caching
@@ -1347,6 +1467,31 @@ namespace Trifling.Caching.Impl
 
             queue.Clear();
             return true;
+        }
+
+        /// <summary>
+        /// Gets the length of a queue stored in the cache. If the key doesn't exist or isn't a queue then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached queue to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the queue if found, or null if not found.</returns>
+        public long? LengthOfQueue(string cacheEntryKey)
+        {
+            // first remove anything that has already expired.
+            this.CleanupExpiredCacheItems();
+
+            if (!cachedQueues.ContainsKey(cacheEntryKey))
+            {
+                // key doesn't exist as a cached queue
+                return null;
+            }
+
+            Queue<object> queue;
+            if (!cachedQueues.TryGetValue(cacheEntryKey, out queue))
+            {
+                return null;
+            }
+
+            return queue.Count;
         }
 
         #endregion Queue caching

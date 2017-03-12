@@ -36,7 +36,7 @@
             // we expect that the engine will be initialised with the options mocked above.
             var engineMoq = new Mock<ICacheEngine>();
             engineMoq
-                .Setup(_ => _.Initialise(options))
+                .Setup(_ => _.Initialize(options))
                 .Verifiable();
 
             // ----- Act -----
@@ -47,7 +47,7 @@
                 compressorFactoryMoq.Object);
 
             // ----- Assert -----
-            engineMoq.Verify(_ => _.Initialise(options), Times.Once());
+            engineMoq.Verify(_ => _.Initialize(options), Times.Once());
         }
 
         [TestMethod]
@@ -1076,6 +1076,499 @@
             streamCompressionMoq.Verify(_ => _.CompressStream(It.IsAny<Stream>(), It.IsAny<Stream>()), Times.Once());
             binarySerializerMoq.Verify(_ => _.SerializeToStream<string>("around and 'round the mulberry bush...", It.IsAny<Stream>()), Times.Once());
             cacheEngineMoq.Verify(_ => _.Cache(cacheEntryKey.ToString(), expectedCacheValue, TimeSpan.FromMinutes(30d)), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_Exists_WhenCacheEngineReturnsTrue_ThenReturnsTrue()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.Exists(cacheEntryKey.ToString()))
+                .Returns(true)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.Exists(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(exists);
+            cacheEngineMoq.Verify(_ => _.Exists(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_Exists_WhenCacheEngineReturnsFalse_ThenReturnsFalse()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.Exists(cacheEntryKey.ToString()))
+                .Returns(false)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.Exists(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(exists);
+            cacheEngineMoq.Verify(_ => _.Exists(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInSet_WhenValueIsDouble_ThenPassesValueThroughToEngine()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-doubles-set-1");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()))
+                .Returns(true)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInSet(cacheEntryKey, 46.75d);
+
+            // ----- Assert -----
+            Assert.IsTrue(exists);
+            cacheEngineMoq.Verify(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInSet_WhenValueIsString_ThenPassesValueThroughToEngine()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-strings-set-1");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()))
+                .Returns(true)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInSet(cacheEntryKey, "5-08F2/D");
+
+            // ----- Assert -----
+            Assert.IsTrue(exists);
+            cacheEngineMoq.Verify(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInSet_WhenValueIsLong_ThenPassesValueThroughToEngine()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-longs-set-1");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()))
+                .Returns(false)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInSet(cacheEntryKey, 405505470035L);
+
+            // ----- Assert -----
+            Assert.IsFalse(exists);
+            cacheEngineMoq.Verify(_ => _.ExistsInSet(cacheEntryKey.ToString(), It.IsAny<IConvertible>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInSet_WhenValueIsObject_ThenSerialisedValuePassedToEngine()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("set-key", 1908, 'D');
+            var expectedKeyString = cacheEntryKey.ToString();
+            var expectedValue = new byte[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+
+            var configurationMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            CacheManagerTests.SetupConfigurationOptions(ref configurationMoq);
+
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+            CacheManagerTests.SetupBinarySerializerForFakeSerialize(ref binarySerializerMoq);
+
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var engineMoq = new Mock<ICacheEngine>();
+            engineMoq
+                .Setup(_ => _.ExistsInSet(expectedKeyString, expectedValue))
+                .Returns(true)
+                .Verifiable();
+
+            var cache = new CacheManager(
+                engineMoq.Object,
+                configurationMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInSet(cacheEntryKey, new { Name = "Bob", JobTitle = "Guardian", ComesFrom = "the net" });
+
+            // ----- Assert -----
+            Assert.IsTrue(exists);
+            engineMoq.Verify(_ => _.ExistsInSet(expectedKeyString, expectedValue), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfSet_WhenCacheEngineReturnsNull_ThenReturnsNull()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfSet(cacheEntryKey.ToString()))
+                .Returns((long?)null)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfSet(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(length.HasValue);
+            cacheEngineMoq.Verify(_ => _.LengthOfSet(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfSet_WhenCacheEngineReturnsLong_ThenReturnsLong()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfSet(cacheEntryKey.ToString()))
+                .Returns(9L)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfSet(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(length.HasValue);
+            Assert.AreEqual(9L, length.Value);
+            cacheEngineMoq.Verify(_ => _.LengthOfSet(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfList_WhenCacheEngineReturnsNull_ThenReturnsNull()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfList(cacheEntryKey.ToString()))
+                .Returns((long?)null)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfList(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(length.HasValue);
+            cacheEngineMoq.Verify(_ => _.LengthOfList(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfList_WhenCacheEngineReturnsLong_ThenReturnsLong()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfList(cacheEntryKey.ToString()))
+                .Returns(37L)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfList(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(length.HasValue);
+            Assert.AreEqual(37L, length.Value);
+            cacheEngineMoq.Verify(_ => _.LengthOfList(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfDictionary_WhenCacheEngineReturnsNull_ThenReturnsNull()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfDictionary(cacheEntryKey.ToString()))
+                .Returns((long?)null)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfDictionary(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(length.HasValue);
+            cacheEngineMoq.Verify(_ => _.LengthOfDictionary(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfDictionary_WhenCacheEngineReturnsLong_ThenReturnsLong()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfDictionary(cacheEntryKey.ToString()))
+                .Returns(21L)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfDictionary(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(length.HasValue);
+            Assert.AreEqual(21L, length.Value);
+            cacheEngineMoq.Verify(_ => _.LengthOfDictionary(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfQueue_WhenCacheEngineReturnsNull_ThenReturnsNull()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfQueue(cacheEntryKey.ToString()))
+                .Returns((long?)null)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfQueue(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(length.HasValue);
+            cacheEngineMoq.Verify(_ => _.LengthOfQueue(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_LengthOfQueue_WhenCacheEngineReturnsLong_ThenReturnsLong()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("test-1-2-3");
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.LengthOfQueue(cacheEntryKey.ToString()))
+                .Returns(8L)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var length = cache.LengthOfQueue(cacheEntryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(length.HasValue);
+            Assert.AreEqual(8L, length.Value);
+            cacheEngineMoq.Verify(_ => _.LengthOfQueue(cacheEntryKey.ToString()), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInDictionary_WhenCacheEngineReturnsFalse_ThenReturnsFalse()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("customers");
+            var dictionaryKey = "C0090";
+
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.ExistsInDictionary(cacheEntryKey.ToString(), dictionaryKey))
+                .Returns(false)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInDictionary(cacheEntryKey, dictionaryKey);
+
+            // ----- Assert -----
+            Assert.IsFalse(exists);
+            cacheEngineMoq.Verify(_ => _.ExistsInDictionary(cacheEntryKey.ToString(), dictionaryKey), Times.Once());
+        }
+
+        [TestMethod]
+        public void CacheManager_ExistsInDictionary_WhenCacheEngineReturnsTrue_ThenReturnsTrue()
+        {
+            // ----- Arrange -----
+            var cacheEntryKey = new CacheEntryKey("customers");
+            var dictionaryKey = "D0090";
+
+            var cacheEngineMoq = new Mock<ICacheEngine>();
+            cacheEngineMoq
+                .Setup(_ => _.ExistsInDictionary(cacheEntryKey.ToString(), dictionaryKey))
+                .Returns(true)
+                .Verifiable();
+
+            var configurationOptionsMoq = new Mock<IOptions<CacheManagerConfiguration>>();
+            var streamCompressionMoq = new Mock<IDeflateCompressor>();
+            var compressorFactoryMoq = new Mock<ICompressorFactory>();
+            var binarySerializerMoq = new Mock<IBinarySerializer>();
+
+            var cache = new CacheManager(
+                cacheEngineMoq.Object,
+                configurationOptionsMoq.Object,
+                binarySerializerMoq.Object,
+                compressorFactoryMoq.Object);
+
+            // ----- Act -----
+            var exists = cache.ExistsInDictionary(cacheEntryKey, dictionaryKey);
+
+            // ----- Assert -----
+            Assert.IsTrue(exists);
+            cacheEngineMoq.Verify(_ => _.ExistsInDictionary(cacheEntryKey.ToString(), dictionaryKey), Times.Once());
         }
 
         private static void SetupConfigurationOptions(ref Mock<IOptions<CacheManagerConfiguration>> configurationMoq)

@@ -68,7 +68,7 @@ namespace Trifling.Caching.Impl
         {
             this._configuration = cacheManagerConfiguration?.Value;
             this._cacheEngine = cacheEngine;
-            this._cacheEngine.Initialise(cacheManagerConfiguration.Value?.CacheEngineConfiguration);
+            this._cacheEngine.Initialize(cacheManagerConfiguration.Value?.CacheEngineConfiguration);
             this._binarySerializer = binarySerializer;
             this._compressorFactory = compressorFactory;
 
@@ -110,6 +110,16 @@ namespace Trifling.Caching.Impl
         public bool Remove(CacheEntryKey key)
         {
             return this._cacheEngine.Remove(key);
+        }
+
+        /// <summary>
+        /// Checks if any cached value exists with the specified <paramref name="cacheEntryKey"/>.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique identifier of the cache entry to seek in cache.</param>
+        /// <returns>If the cache entry was found, then returns true. Otherwise returns false.</returns>
+        public bool Exists(CacheEntryKey cacheEntryKey)
+        {
+            return this._cacheEngine.Exists(cacheEntryKey);
         }
 
         #endregion Common caching operations
@@ -382,6 +392,37 @@ namespace Trifling.Caching.Impl
                     this._cacheEngine.RetrieveSet(cacheEntryKey).Cast<T>());
         }
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="value"/> in a cached set.
+        /// </summary>
+        /// <typeparam name="T">The type of objects that are contained in the cached set.</typeparam>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and within which to find the value.</param>
+        /// <param name="value">The value to locate in the existing set.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the value is not present in the cached set.</returns>
+        public bool ExistsInSet<T>(CacheEntryKey cacheEntryKey, T value)
+        {
+            var ti = typeof(T).GetTypeInfo();
+            if (!ti.GetInterfaces().Contains(typeof(IConvertible)))
+            {
+                // if the values in cache are compressed and serialised then we must do the same to compare.
+                return this._cacheEngine.ExistsInSet(cacheEntryKey, this.ApplySerializationToValue<T>(value));
+            }
+
+            // for these types, the value is not serialised in the cache.
+            // compare the values as-is to the values in the cache engine.
+            return this._cacheEngine.ExistsInSet(cacheEntryKey, (IConvertible)value);
+        }
+
+        /// <summary>
+        /// Gets the length of a set stored in the cache. If the key doesn't exist or isn't a set then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached set to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the set if found, or null if not found.</returns>
+        public long? LengthOfSet(CacheEntryKey cacheEntryKey)
+        {
+            return this._cacheEngine.LengthOfSet(cacheEntryKey);
+        }
+
         #endregion Set caching
 
         #region List caching
@@ -512,6 +553,16 @@ namespace Trifling.Caching.Impl
         public bool ClearList(CacheEntryKey cacheEntryKey)
         {
             return this._cacheEngine.ClearList(cacheEntryKey);
+        }
+
+        /// <summary>
+        /// Gets the length of a list stored in the cache. If the key doesn't exist or isn't a list then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached list to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the list if found, or null if not found.</returns>
+        public long? LengthOfList(CacheEntryKey cacheEntryKey)
+        {
+            return this._cacheEngine.LengthOfList(cacheEntryKey);
         }
 
         #endregion List caching
@@ -677,6 +728,27 @@ namespace Trifling.Caching.Impl
             return true;
         }
 
+        /// <summary>
+        /// Attempts to locate the <paramref name="dictionaryKey"/> in a cached dictionary.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cache entry which contains the dictionary.</param>
+        /// <param name="dictionaryKey">The unique name within the dictionary for the value being sought.</param>
+        /// <returns>Returns false if the cache entry doesn't exist or if the key is not present in the cached dictionary.</returns>
+        public bool ExistsInDictionary(CacheEntryKey cacheEntryKey, string dictionaryKey)
+        {
+            return this._cacheEngine.ExistsInDictionary(cacheEntryKey, dictionaryKey);
+        }
+
+        /// <summary>
+        /// Gets the length of a dictionary stored in the cache. If the key doesn't exist or isn't a dictionary then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached dictionary to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the dictionary if found, or null if not found.</returns>
+        public long? LengthOfDictionary(CacheEntryKey cacheEntryKey)
+        {
+            return this._cacheEngine.LengthOfDictionary(cacheEntryKey);
+        }
+
         #endregion Dictionary caching
 
         #region Queue caching
@@ -776,6 +848,16 @@ namespace Trifling.Caching.Impl
         public bool ClearQueue(CacheEntryKey cacheEntryKey)
         {
             return this._cacheEngine.ClearQueue(cacheEntryKey);
+        }
+
+        /// <summary>
+        /// Gets the length of a queue stored in the cache. If the key doesn't exist or isn't a queue then returns null.
+        /// </summary>
+        /// <param name="cacheEntryKey">The unique key of the cached queue to locate and for which the length must be read.</param>
+        /// <returns>Returns the length of the queue if found, or null if not found.</returns>
+        public long? LengthOfQueue(CacheEntryKey cacheEntryKey)
+        {
+            return this._cacheEngine.LengthOfQueue(cacheEntryKey);
         }
 
         #endregion Queue caching

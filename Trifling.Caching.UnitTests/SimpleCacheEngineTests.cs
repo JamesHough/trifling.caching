@@ -105,7 +105,7 @@
             var listValues = new List<decimal> { 34.4m, 8.12m, 9m, 101022.0003m, 0.000000000046m };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(6.3333d));
@@ -135,7 +135,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(5.5d));
@@ -167,7 +167,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(6.1d));
@@ -200,7 +200,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(8d));
@@ -231,7 +231,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -255,7 +255,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -279,7 +279,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -300,7 +300,7 @@
             var cacheKey = "retrieve-set-not-found/0/0";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RetrieveSet<int>(cacheKey);
@@ -317,7 +317,7 @@
             var listValues = new List<decimal> { 34.4m, 8.12m, 9m, 101022.0003m, 0.000000000046m };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(6.3333d));
@@ -348,7 +348,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(5.5d));
@@ -381,7 +381,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(6.1d));
@@ -415,7 +415,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(8d));
@@ -449,7 +449,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(6d));
@@ -481,7 +481,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(4.4d));
 
             // ----- Act -----
@@ -505,7 +505,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(3.4d));
 
             // ----- Act -----
@@ -522,7 +522,7 @@
             var cacheKey = "retrieve-list-not-found/0/0";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RetrieveList(cacheKey);
@@ -532,94 +532,73 @@
         }
 
         [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_WhenInjectedIntoListOfDoubles_ThenRetrieveListReturnsFullList()
+        public void SimpleCacheEngineTests_ExistsInSet_WhenCacheEntryKeyDoesntExist_ThenReturnsFalse()
         {
             // ----- Arrange -----
-            var cacheKey = "inject-in-list-of-doubles/01";
-            var listValues = new List<double>
-            {
-                44d,
-                454184069335d,
-                5.0000000000022d,
-                0.0120110155332d,
-                891440125700.10408883333d,
-                78366020d / 6d
-            };
+            var cacheKey = "some-non-existent-set/01";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
-            engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(5.1d));
+            engine.Initialize(null);
 
             // ----- Act -----
-            engine.InjectInList(cacheKey, 4, 4548.222d);
-
-            var retrieved = engine.RetrieveList<double>(cacheKey);
-
-            // ----- Assert -----
-            Assert.IsNotNull(retrieved);
-            Assert.AreEqual(listValues.Count + 1, retrieved.Count);
-            for (var i = 0; i < retrieved.Count; i++)
-            {
-                var j = (i > 3) ? i - 1 : i;
-
-                if (i == 4)
-                {
-                    // test the injected item
-                    Assert.AreEqual(4548.222d, retrieved[i], 0.0000000000001d, "expected list values did not match at 4");
-                    continue;
-                }
-
-                // this test ensures ordering is maintained
-                Assert.AreEqual(listValues[j], retrieved[i], 0.0000000000001d, "expected list values did not match at " + i);
-            }
-        }
-
-        [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_WhenCacheEntryKeyExists_ThenReturnsTrue()
-        {
-            // ----- Arrange -----
-            var cacheKey = "inject-in-list-of-ints/01";
-            var listValues = new List<int>
-            {
-                81,
-                466,
-                300,
-                78
-            };
-
-            var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
-            engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(3.9d));
-
-            // ----- Act -----
-            var result = engine.InjectInList(cacheKey, 0, 807045);
-
-            // ----- Assert -----
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_WhenCacheEntryKeyDoesntExist_ThenReturnsFalse()
-        {
-            // ----- Arrange -----
-            var cacheKey = "inject-in-list-of-int/30303";
-            var listValues = new List<int>
-            {
-                6070,
-                100971,
-                130,
-                8
-            };
-
-            var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
-            engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(3.4d));
-
-            // ----- Act -----
-            var result = engine.InjectInList("inject-in-list-of-int/40404", 4, 130);
+            var result = engine.ExistsInSet(cacheKey, 4548.222d);
 
             // ----- Assert -----
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void SimpleCacheEngineTests_ExistsInSet_WhenSetDoesntContainValue_ThenReturnsFalse()
+        {
+            // ----- Arrange -----
+            var cacheKey = "set-of-ints/01";
+            var setValues = new SortedSet<int>
+            {
+                5478101,
+                466,
+                300,
+                701018,
+                99, 
+                92
+            };
+
+            var engine = new SimpleCacheEngine();
+            engine.Initialize(null);
+            engine.CacheAsSet(cacheKey, setValues, TimeSpan.FromSeconds(3.1d));
+
+            // ----- Act -----
+            var result = engine.ExistsInSet(cacheKey, -100);
+
+            // ----- Assert -----
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void SimpleCacheEngineTests_ExistsInSet_WhenSetDoesContainValue_ThenReturnsTrue()
+        {
+            // ----- Arrange -----
+            var cacheKey = "set-of-ints/02";
+            var setValues = new SortedSet<int>
+            {
+                3,
+                99,
+                130,
+                300,
+                6070,
+                100971,
+                701018,
+                707008
+            };
+
+            var engine = new SimpleCacheEngine();
+            engine.Initialize(null);
+            engine.CacheAsSet(cacheKey, setValues, TimeSpan.FromSeconds(3.1d));
+
+            // ----- Act -----
+            var result = engine.ExistsInSet(cacheKey, 130);
+
+            // ----- Assert -----
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -636,7 +615,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(4d));
 
             // ----- Act -----
@@ -663,7 +642,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(5));
 
             // ----- Act -----
@@ -697,7 +676,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7.2d));
@@ -735,7 +714,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7.2d));
@@ -766,7 +745,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(5.5d));
@@ -797,7 +776,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(8d));
@@ -829,7 +808,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7d));
 
             // ----- Act -----
@@ -853,7 +832,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(6.5d));
 
             // ----- Act -----
@@ -877,7 +856,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(6.5d));
 
             // ----- Act -----
@@ -900,7 +879,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(5.1d));
 
             // ----- Act -----
@@ -929,7 +908,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -953,7 +932,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -977,7 +956,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1006,7 +985,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1030,7 +1009,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1054,7 +1033,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1080,7 +1059,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7d));
 
             // ----- Act -----
@@ -1107,7 +1086,7 @@
             var cacheKey = "retrieve-dictionary-not-found/8/9/10";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RetrieveDictionary<int>(cacheKey);
@@ -1123,7 +1102,7 @@
             var cacheKey = "remove-from-dictionary-doesnt-exist/40/404";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RemoveFromDictionary(cacheKey, "any old key");
@@ -1146,7 +1125,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, dictionaryItems, TimeSpan.FromSeconds(4.1));
 
             // ----- Act -----
@@ -1170,7 +1149,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, dictionaryItems, TimeSpan.FromSeconds(4.5));
 
             // ----- Act -----
@@ -1188,7 +1167,7 @@
             var queuedItems = new int[] { 56, 899, 1040, 3030, 81 };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(3.9));
@@ -1216,7 +1195,7 @@
             var queuedItems = new int[0];
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(4.9));
 
             // ----- Act -----
@@ -1237,7 +1216,7 @@
             var queuedItems = new int[0];
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(4.9));
 
             // ----- Act -----
@@ -1261,7 +1240,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(3.9));
@@ -1287,7 +1266,7 @@
             var queuedItems = new byte[0][];
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(4.9));
 
             // ----- Act -----
@@ -1308,7 +1287,7 @@
             var queuedItems = new byte[0][];
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsQueue(cacheKey, queuedItems, TimeSpan.FromSeconds(4.9));
 
             // ----- Act -----
@@ -1331,7 +1310,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.5d));
@@ -1362,7 +1341,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(8d));
@@ -1394,7 +1373,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7d));
 
             // ----- Act -----
@@ -1419,7 +1398,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(6.5d));
 
             // ----- Act -----
@@ -1444,7 +1423,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(6.5d));
 
             // ----- Act -----
@@ -1469,7 +1448,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -1493,7 +1472,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1517,7 +1496,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1546,7 +1525,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1570,7 +1549,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1594,7 +1573,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, initialValues, TimeSpan.FromSeconds(4.1d));
 
             // ----- Act -----
@@ -1614,7 +1593,7 @@
             var cacheKey = "retrieve-dictionary-not-found-byte-array/8/9/10";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             IDictionary<string, byte[]> result = engine.RetrieveDictionary(cacheKey);
@@ -1637,7 +1616,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, dictionaryItems, TimeSpan.FromSeconds(4.1));
 
             // ----- Act -----
@@ -1661,7 +1640,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsDictionary(cacheKey, dictionaryItems, TimeSpan.FromSeconds(4.5));
 
             // ----- Act -----
@@ -1685,7 +1664,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(6.3333d));
@@ -1716,7 +1695,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -1740,7 +1719,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -1764,7 +1743,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsSet(cacheKey, listValues, TimeSpan.FromSeconds(7.4d));
 
             // ----- Act -----
@@ -1785,7 +1764,7 @@
             var cacheKey = "retrieve-set-not-found-byte-array/0/0";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RetrieveSet(cacheKey);
@@ -1807,7 +1786,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(6.3333d));
@@ -1841,7 +1820,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(6d));
@@ -1873,7 +1852,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(4.4d));
 
             // ----- Act -----
@@ -1897,7 +1876,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(3.4d));
 
             // ----- Act -----
@@ -1914,7 +1893,7 @@
             var cacheKey = "retrieve-list-not-found-byte-array/0/0";
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
             var result = engine.RetrieveList(cacheKey);
@@ -1924,82 +1903,65 @@
         }
 
         [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_ByteArray_WhenInjectedIntoList_ThenRetrieveListReturnsFullList()
-        {
-            // ----- Arrange -----
-            var cacheKey = "inject-in-list-of-doubles-byte-array/01";
-            var listValues = new List<byte[]>
-            {
-                new byte[] { 2, 0, 10, 9, 17 },
-                new byte[] { 20, 19, 12, 28 },
-                new byte[] { 201, 6, 2, 2, 0, 0, 9 },
-                new byte[] { 200, 44, 14 }
-            };
-
-            var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
-            engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(5.1d));
-
-            // ----- Act -----
-            engine.InjectInList(cacheKey, 4, new byte[] { 45, 48, 2, 22 });
-
-            var retrieved = engine.RetrieveList(cacheKey);
-
-            // ----- Assert -----
-            Assert.IsNotNull(retrieved);
-            Assert.AreEqual(listValues.Count + 1, retrieved.Count);
-            for (var i = 0; i < retrieved.Count; i++)
-            {
-                var j = (i > 3) ? i - 1 : i;
-
-                if (i == 4)
-                {
-                    // test the injected item
-                    Assert.IsTrue(ByteArraysEqual(new byte[] { 45, 48, 2, 22 }, retrieved[i]), "expected list values did not match at 4");
-                    continue;
-                }
-
-                // this test ensures ordering is maintained
-                Assert.IsTrue(ByteArraysEqual(listValues[j], retrieved[i]), "expected list values did not match at " + i);
-            }
-        }
-
-        [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_ByteArray_WhenCacheEntryKeyExists_ThenReturnsTrue()
-        {
-            // ----- Arrange -----
-            var cacheKey = "inject-in-list-of-byte-arrays/01";
-            var listValues = new List<byte[]>
-            {
-                new byte[] { 2, 0, 10, 9, 17 },
-                new byte[] { 20, 19, 12, 28 },
-                new byte[] { 201, 6, 2, 2, 0, 0, 9 },
-                new byte[] { 200, 44, 14 }
-            };
-
-            var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
-            engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(3.9d));
-
-            // ----- Act -----
-            var result = engine.InjectInList(cacheKey, 0, new byte[] { 8, 0, 7, 0, 45 });
-
-            // ----- Assert -----
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public void SimpleCacheEngineTests_InjectInList_ByteArray_WhenCacheEntryKeyDoesntExist_ThenReturnsFalse()
+        public void SimpleCacheEngineTests_ExistsInSet_ByteArray_WhenCacheEntryDoesntExist_ThenReturnsFalse()
         {
             // ----- Arrange -----
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
 
             // ----- Act -----
-            var result = engine.InjectInList("inject-in-list-of-byte-arrays/40404", 4, new byte[] { 1, 30 });
+            var result = engine.ExistsInSet("a-set-that-doesn't-exist", new byte[] { 45, 48, 2, 22 });
 
             // ----- Assert -----
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void SimpleCacheEngineTests_ExistsInSet_ByteArray_WhenSetDoesntContainValue_ThenReturnsFalse()
+        {
+            // ----- Arrange -----
+            var cacheKey = "exists-in-set-of-byte-array/01";
+            var setValues = new HashSet<byte[]>
+            {
+                new byte[] { 2, 0, 10, 9, 17 },
+                new byte[] { 20, 19, 12, 28 },
+                new byte[] { 201, 6, 2, 2, 0, 0, 9 },
+                new byte[] { 200, 44, 14 }
+            };
+
+            var engine = new SimpleCacheEngine();
+            engine.Initialize(null);
+            engine.CacheAsSet(cacheKey, setValues, TimeSpan.FromSeconds(4d));
+
+            // ----- Act -----
+            var result = engine.ExistsInSet(cacheKey, new byte[] { 45, 48, 2, 22 });
+
+            // ----- Assert -----
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void SimpleCacheEngineTests_ExistsInSet_ByteArray_WhenSetDoesContainValue_ThenReturnsTrue()
+        {
+            // ----- Arrange -----
+            var cacheKey = "exists-in-set-of-byte-array/02";
+            var setValues = new HashSet<byte[]>
+            {
+                new byte[] { 2, 0, 10, 9, 17 },
+                new byte[] { 20, 19, 12, 28 },
+                new byte[] { 201, 6, 2, 2, 0, 0, 9 },
+                new byte[] { 200, 44, 14 }
+            };
+
+            var engine = new SimpleCacheEngine();
+            engine.Initialize(null);
+            engine.CacheAsSet(cacheKey, setValues, TimeSpan.FromSeconds(3.2d));
+
+            // ----- Act -----
+            var result = engine.ExistsInSet(cacheKey, new byte[] { 201, 6, 2, 2, 0, 0, 9 });
+
+            // ----- Assert -----
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -2016,7 +1978,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(4d));
 
             // ----- Act -----
@@ -2043,7 +2005,7 @@
             };
 
             var engine = new SimpleCacheEngine();
-            engine.Initialise(null);
+            engine.Initialize(null);
             engine.CacheAsList(cacheKey, listValues, TimeSpan.FromSeconds(5));
 
             // ----- Act -----
