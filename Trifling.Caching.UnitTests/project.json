@@ -2,7 +2,7 @@
   "title": "Trifling.Caching.UnitTests",
   "copyright": "James Hough 2017",
   "description": "The Unit Tests for the Trifling Caching Library",
-  "version": "0.3.1-*",
+  "version": "0.4.0-*",
   
   "buildOptions": {
     "emitEntryPoint": true
@@ -14,7 +14,7 @@
     "dotnet-test-mstest": "1.1.2-preview",
     "Moq": "4.6.38-alpha",
     "MSTest.TestFramework": "1.0.8-rc",
-    "Trifling.Caching": "0.3.1-beta"
+    "Trifling.Caching": "0.4.0-beta"
   },
 
   "runtimes": {

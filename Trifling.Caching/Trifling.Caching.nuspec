@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>Trifling.Caching</id>
-        <version>0.3.1-beta</version>
+        <version>0.4.0-beta</version>
         <title>Trifling Caching</title>
         <authors>Trifling Contributors</authors>
         <owners>JamesHough</owners>
@@ -11,7 +11,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A Trifling library for common caching operations.</description>
         <summary>Trifling Caching</summary>
-        <releaseNotes>0.3.1-beta
+        <releaseNotes>0.4.0-beta
+* (Breaking) renamed "Initialize" method on ICacheEngine interface.
+* (Breaking) removed Inject In List methods on ICacheEngine interface.
+* New Exists method to check if cache key exists in cache.
+* New methods for the length of cached Sets, Lists, Dictionaries and Queues.
+
+0.3.1-beta
 * Expanded ICacheManager operations to support Sets, Lists, Dictionaries and Queues
 * Code refactor of an internal class moved to Trifling.Common
 
@@ -37,11 +43,11 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Debug\net452\Trifling.Caching.dll" target="lib\net452\Trifling.Caching.dll" />
-        <file src="bin\Debug\net452\Trifling.Caching.pdb" target="lib\net452\Trifling.Caching.pdb" />
-        <file src="bin\Debug\net452\Trifling.Caching.xml" target="lib\net452\Trifling.Caching.xml" />
-        <file src="bin\Debug\netstandard1.6\Trifling.Caching.dll" target="lib\netstandard1.6\Trifling.Caching.dll" />
-        <file src="bin\Debug\netstandard1.6\Trifling.Caching.pdb" target="lib\netstandard1.6\Trifling.Caching.pdb" />
-        <file src="bin\Debug\netstandard1.6\Trifling.Caching.xml" target="lib\netstandard1.6\Trifling.Caching.xml" />
+        <file src="bin\Release\net452\Trifling.Caching.dll" target="lib\net452\Trifling.Caching.dll" />
+        <file src="bin\Release\net452\Trifling.Caching.pdb" target="lib\net452\Trifling.Caching.pdb" />
+        <file src="bin\Release\net452\Trifling.Caching.xml" target="lib\net452\Trifling.Caching.xml" />
+        <file src="bin\Release\netstandard1.6\Trifling.Caching.dll" target="lib\netstandard1.6\Trifling.Caching.dll" />
+        <file src="bin\Release\netstandard1.6\Trifling.Caching.pdb" target="lib\netstandard1.6\Trifling.Caching.pdb" />
+        <file src="bin\Release\netstandard1.6\Trifling.Caching.xml" target="lib\netstandard1.6\Trifling.Caching.xml" />
     </files>
 </package>
